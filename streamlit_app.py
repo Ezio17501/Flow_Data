@@ -40,51 +40,51 @@ candlestick_data = [
 # Print the candlestick data for verification
 st.write("Candlestick Data:", candlestick_data)
 
-# Initialize chart options
-chartOptions = {
-    "layout": {
-        "textColor": 'black',
-        "background": {
-            "type": 'solid',
-            "color": 'white'
-        }
-    }
-}
+# # Initialize chart options
+# chartOptions = {
+#     "layout": {
+#         "textColor": 'black',
+#         "background": {
+#             "type": 'solid',
+#             "color": 'white'
+#         }
+#     }
+# }
 
-# Create a placeholder to display the chart
-placeholder = st.empty()
+# # Create a placeholder to display the chart
+# placeholder = st.empty()
 
-# Simulate candle progression
-for i in range(len(candlestick_data)):
-    # Get only the candles up to the current iteration
-    current_candlestick_data = candlestick_data[:i+1]
+# # Simulate candle progression
+# for i in range(len(candlestick_data)):
+#     # Get only the candles up to the current iteration
+#     current_candlestick_data = candlestick_data[:i+1]
     
-    # Define the candlestick chart series with only the available candles
-    seriesCandlestickChart = [{
-        "type": 'Candlestick',
-        "data": current_candlestick_data,
-        "options": {
-            "upColor": '#26a69a',
-            "downColor": '#ef5350',
-            "borderVisible": False,
-            "wickUpColor": '#26a69a',
-            "wickDownColor": '#ef5350'
-        }
-    }]
+#     # Define the candlestick chart series with only the available candles
+#     seriesCandlestickChart = [{
+#         "type": 'Candlestick',
+#         "data": current_candlestick_data,
+#         "options": {
+#             "upColor": '#26a69a',
+#             "downColor": '#ef5350',
+#             "borderVisible": False,
+#             "wickUpColor": '#26a69a',
+#             "wickDownColor": '#ef5350'
+#         }
+#     }]
     
-    # Display the updated chart
-    with placeholder.container():
-        st.subheader(f"Real-Time Candlestick Chart for {stock_symbol} (Candle {i+1})")
-        renderLightweightCharts([
-            {
-                "chart": chartOptions,
-                "series": seriesCandlestickChart
-            }
-        ], 'candlestick')
+#     # Display the updated chart
+#     with placeholder.container():
+#         st.subheader(f"Real-Time Candlestick Chart for {stock_symbol} (Candle {i+1})")
+#         renderLightweightCharts([
+#             {
+#                 "chart": chartOptions,
+#                 "series": seriesCandlestickChart
+#             }
+#         ], 'candlestick')
 
-        # Display the detailed stock data in a table
-        st.markdown(f"### Stock Data (up to Candle {i+1})")
-        st.dataframe(stock_data.iloc[:i+1])
+#         # Display the detailed stock data in a table
+#         st.markdown(f"### Stock Data (up to Candle {i+1})")
+#         st.dataframe(stock_data.iloc[:i+1])
 
-    # Simulate real-time by waiting 5 minutes (for testing purposes, we can reduce it to a few seconds)
-    time.sleep(5)  # Change to 300 for actual 5-minute intervals
+#     # Simulate real-time by waiting 5 minutes (for testing purposes, we can reduce it to a few seconds)
+#     time.sleep(5)  # Change to 300 for actual 5-minute intervals
