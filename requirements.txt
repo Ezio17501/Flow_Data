@@ -4,4 +4,3 @@ tradingview_ta
 streamlit-lightweight-charts
 pandas
 numpy
-plotly.graph_objs
