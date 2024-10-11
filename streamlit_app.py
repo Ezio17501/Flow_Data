@@ -37,6 +37,9 @@ candlestick_data = [
     for row in stock_data.itertuples()
 ]
 
+# Print the candlestick data for verification
+st.write("Candlestick Data:", candlestick_data)
+
 # Initialize chart options
 chartOptions = {
     "layout": {
