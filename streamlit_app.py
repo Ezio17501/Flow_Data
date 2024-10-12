@@ -14,7 +14,7 @@ st.set_page_config(
 # Fetch FSL.NS data for 11th Oct with 5-minute interval
 symbol = 'FSL.NS'
 start_date = '2024-10-11'
-end_date = '2024-10-11'
+end_date = '2024-10-12'
 interval = '5m'
 
 data = yf.download(symbol, start=start_date, end=end_date, interval=interval)
