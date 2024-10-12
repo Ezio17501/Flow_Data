@@ -37,22 +37,28 @@ st.write(candlestick_data)  # To check the data in Streamlit's interface
 
 # Define chart options
 chartOptions = {
-    "layout": {
-        "textColor": 'black',
-        "background": {
-            "type": 'solid',
-            "color": 'white'
+            "width": 800,  # Enlarged chart width
+            "height": 600,  # Enlarged chart height
+            "layout": {
+                "background": {"type": "solid", "color": "white"},
+                "textColor": "black",
+            },
+            "grid": {
+                "vertLines": {"color": "rgba(197, 203, 206, 0.5)"},
+                "horzLines": {"color": "rgba(197, 203, 206, 0.5)"},
+            },
+            "crosshair": {"mode": 0},
+            "priceScale": {"borderColor": "rgba(197, 203, 206, 0.8)"},
+            "timeScale": {
+                "borderColor": "rgba(197, 203, 206, 0.8)",
+                "barSpacing": 10,
+                "minBarSpacing": 8,
+                "timeVisible": True,
+                "secondsVisible": False,
+            },
+           
         }
-    },
-    "watermark": {
-        "visible": True,
-        "fontSize": 24,
-        "horzAlign": 'center',
-        "vertAlign": 'center',
-        "color": 'rgba(171, 71, 188, 0.4)',
-        "text": f"FSL.NS {start_date}"
-    }
-}
+
 
 # Define candlestick series options
 seriesCandlestickChart = [{
