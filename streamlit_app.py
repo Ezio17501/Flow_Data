@@ -19,11 +19,11 @@ def refresh_during_market_hours(refresh_interval=10):
     # Define the Indian Standard Time (IST) timezone
     ist = pytz.timezone('Asia/Kolkata')
 
-    # Define market open and close times in IST
-    market_open = datetime.now(ist).replace(hour=9, minute=15, second=0, microsecond=0)
-    market_close = datetime.now(ist).replace(hour=15, minute=30, second=0, microsecond=0)
+    # Define market open and close times in IST (ensure all are timezone-aware)
+    market_open = ist.localize(datetime.now().replace(hour=9, minute=15, second=0, microsecond=0))
+    market_close = ist.localize(datetime.now().replace(hour=15, minute=30, second=0, microsecond=0))
 
-    # Get the current time in IST
+    # Get the current time in IST (also timezone-aware)
     now = datetime.now(ist)
 
     # Check if the current time is within market hours
