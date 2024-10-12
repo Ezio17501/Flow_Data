@@ -172,7 +172,7 @@ def render_candlestick_chart(i):
 placeholder = st.empty()
 
 # Simulation of live feed
-interval_seconds = 300  # 5 minutes in seconds
+interval_seconds = 10  # 5 minutes in seconds
 total_intervals = len(data)
 
 # Simulate starting from the first 5-minute interval
