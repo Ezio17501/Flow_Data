@@ -1,147 +1,139 @@
 import streamlit as st
-from streamlit_autorefresh import st_autorefresh
+import yfinance as yf
+from datetime import datetime, timedelta
+from streamlit_lightweight_charts import renderLightweightCharts
+import time
+import pytz  # Import pytz for timezone handling
 
-# Run the autorefresh about every 2000 milliseconds (2 seconds) and stop
-# after it's been refreshed 100 times.
-count = st_autorefresh(interval=2000, limit=100, key="fizzbuzzcounter")
-
-# The function returns a counter for number of refreshes. This allows the
-# ability to make special requests at different intervals based on the count
-if count == 0:
-    st.write("Count is zero")
-elif count % 3 == 0 and count % 5 == 0:
-    st.write("FizzBuzz")
-elif count % 3 == 0:
-    st.write("Fizz")
-elif count % 5 == 0:
-    st.write("Buzz")
-else:
-    st.write(f"Count: {count}")
-
-
-# import streamlit as st
-# import yfinance as yf
-# from datetime import datetime, timedelta
-# from streamlit_lightweight_charts import renderLightweightCharts
-# import time
-# import pytz  # Import pytz for timezone handling
-
-# # Streamlit app setup
-# st.set_page_config(
-#     page_title='Real-Time Data Science Dashboard',
-#     layout='wide'
-# )
-
-# # Function to refresh during market hours with timezone
-# def refresh_during_market_hours(refresh_interval=10):
-#     """Refresh the app every `refresh_interval` seconds during market hours (9:15 AM to 3:30 PM IST)."""
+# Streamlit app setup
+st.set_page_config(
+    page_title='Real-Time Data Science Dashboard',
+    layout='wide'
+)
+def refresh_during_market_hours(refresh_interval=300):  # Refresh every 5 minutes (300 seconds)
+    """Refresh the app during market hours (9:15 AM to 3:30 PM IST) using time.sleep() to simulate refresh intervals."""
     
-#     # Define the Indian Standard Time (IST) timezone
-#     ist = pytz.timezone('Asia/Kolkata')
+    # Define the Indian Standard Time (IST) timezone
+    ist = pytz.timezone('Asia/Kolkata')
 
-#     # Define market open and close times in IST (ensure all are timezone-aware)
-#     market_open = ist.localize(datetime.now().replace(hour=9, minute=15, second=0, microsecond=0))
-#     market_close = ist.localize(datetime.now().replace(hour=15, minute=30, second=0, microsecond=0))
+    # Define market open and close times in IST (ensure all are timezone-aware)
+    market_open = datetime.now(ist).replace(hour=9, minute=15, second=0, microsecond=0)
+    market_close = datetime.now(ist).replace(hour=15, minute=30, second=0, microsecond=0)
 
-#     # Get the current time in IST (also timezone-aware)
-#     now = datetime.now(ist)
+    # Get the current time in IST
+    now = datetime.now(ist)
 
-#     # Check if the current time is within market hours
-#     if market_open <= now <= market_close:
-#         st.write(f"Market is open! Refreshing data every {refresh_interval} seconds (IST).")
+    # Calculate total market time in seconds
+    total_market_seconds = (market_close - market_open).total_seconds()
+
+    # Check if the current time is within market hours
+    if market_open <= now <= market_close:
+        # Calculate elapsed time in seconds since market open
+        elapsed_time = (now - market_open).total_seconds()
+
+        # Calculate remaining time until market close
+        remaining_time = total_market_seconds - elapsed_time
+
+        # Calculate how many 5-minute intervals have passed
+        passed_intervals = elapsed_time // refresh_interval
+
+        # Calculate remaining intervals
+        remaining_intervals = remaining_time // refresh_interval
+
+        st.write(f"Market is open! {remaining_intervals} refreshes remaining until market close.")
         
-#         # Store the last time the page was refreshed in Streamlit's session state
-#         if "last_refresh" not in st.session_state:
-#             st.session_state.last_refresh = now
+        # Simulate the refresh behavior
+        for i in range(int(remaining_intervals)):
+            st.write(f"Fetching data for interval {i + 1}...")
+            time.sleep(refresh_interval)  # Wait for the refresh interval (5 minutes)
 
-#         # Check if the refresh interval has passed
-#         if now - st.session_state.last_refresh > timedelta(seconds=refresh_interval):
-#             # Update the last refresh time
-#             st.session_state.last_refresh = now
-#             # Rerun the app to refresh the data
-#             st.rerun()
-#             st.write(now)
-#     else:
-#         st.write("Market is closed. No updates will be made.")
+            # You can simulate data fetching here or update the Streamlit app with new data
+            st.write(f"Interval {i + 1} completed. {int(remaining_intervals - (i + 1))} intervals remaining.")
+            
+        st.write("Market has closed for the day.")
+        
+    else:
+        st.write("Market is closed. No updates will be made.")
 
-# # Fetch and display candlestick chart data
-# def display_candlestick_chart():
-#     # Stock symbol and data settings
-#     symbol = 'FSL.NS'
-#     start_date = '2024-10-11'
-#     end_date = '2024-10-12'
-#     interval = '5m'
 
-#     # Fetch stock data from Yahoo Finance
-#     data = yf.download(symbol, start=start_date, end=end_date, interval=interval)
+# Fetch and display candlestick chart data
+def display_candlestick_chart():
+    # Stock symbol and data settings
+    symbol = 'FSL.NS'
+    start_date = '2024-10-11'
+    end_date = '2024-10-12'
+    interval = '5m'
 
-#     # Prepare data for the candlestick chart
-#     candlestick_data = []
-#     for index, row in data.iterrows():
-#         # Converting timestamp to Unix format
-#         timestamp = int(index.timestamp())
-#         candlestick_data.append({
-#             "open": row['Open'],
-#             "high": row['High'],
-#             "low": row['Low'],
-#             "close": row['Close'],
-#             "time": timestamp
-#         })
+    # Fetch stock data from Yahoo Finance
+    data = yf.download(symbol, start=start_date, end=end_date, interval=interval)
 
-#     # Optionally, show it in Streamlit
-#     st.write(candlestick_data)  # To check the data in Streamlit's interface
+    # Prepare data for the candlestick chart
+    candlestick_data = []
+    for index, row in data.iterrows():
+        # Converting timestamp to Unix format
+        timestamp = int(index.timestamp())
+        candlestick_data.append({
+            "open": row['Open'],
+            "high": row['High'],
+            "low": row['Low'],
+            "close": row['Close'],
+            "time": timestamp
+        })
 
-#     # Define chart options
-#     chartOptions = {
-#         "width": 800,  # Enlarged chart width
-#         "height": 600,  # Enlarged chart height
-#         "layout": {
-#             "background": {"type": "solid", "color": "white"},
-#             "textColor": "black",
-#         },
-#         "grid": {
-#             "vertLines": {"color": "rgba(197, 203, 206, 0.5)"},
-#             "horzLines": {"color": "rgba(197, 203, 206, 0.5)"},
-#         },
-#         "crosshair": {"mode": 0},
-#         "priceScale": {"borderColor": "rgba(197, 203, 206, 0.8)"},
-#         "timeScale": {
-#             "borderColor": "rgba(197, 203, 206, 0.8)",
-#             "barSpacing": 10,
-#             "minBarSpacing": 8,
-#             "timeVisible": True,
-#             "secondsVisible": False,
-#         },
-#     }
+    # Optionally, show it in Streamlit
+    st.write(candlestick_data)  # To check the data in Streamlit's interface
 
-#     # Define candlestick series options
-#     seriesCandlestickChart = [{
-#         "type": 'Candlestick',
-#         "data": candlestick_data,
-#         "options": {
-#             "upColor": '#26a69a',
-#             "downColor": '#ef5350',
-#             "borderVisible": False,
-#             "wickUpColor": '#26a69a',
-#             "wickDownColor": '#ef5350'
-#         }
-#     }]
+    # Define chart options
+    chartOptions = {
+        "width": 800,  # Enlarged chart width
+        "height": 600,  # Enlarged chart height
+        "layout": {
+            "background": {"type": "solid", "color": "white"},
+            "textColor": "black",
+        },
+        "grid": {
+            "vertLines": {"color": "rgba(197, 203, 206, 0.5)"},
+            "horzLines": {"color": "rgba(197, 203, 206, 0.5)"},
+        },
+        "crosshair": {"mode": 0},
+        "priceScale": {"borderColor": "rgba(197, 203, 206, 0.8)"},
+        "timeScale": {
+            "borderColor": "rgba(197, 203, 206, 0.8)",
+            "barSpacing": 10,
+            "minBarSpacing": 8,
+            "timeVisible": True,
+            "secondsVisible": False,
+        },
+    }
 
-#     # Render chart
-#     st.subheader(f"Candlestick Chart for {symbol} on {start_date}")
-#     renderLightweightCharts([{
-#         "chart": chartOptions,
-#         "series": seriesCandlestickChart
-#     }], 'candlestick')
+    # Define candlestick series options
+    seriesCandlestickChart = [{
+        "type": 'Candlestick',
+        "data": candlestick_data,
+        "options": {
+            "upColor": '#26a69a',
+            "downColor": '#ef5350',
+            "borderVisible": False,
+            "wickUpColor": '#26a69a',
+            "wickDownColor": '#ef5350'
+        }
+    }]
 
-# # Refresh during market hours
-# refresh_during_market_hours(refresh_interval=10)
+    # Render chart
+    st.subheader(f"Candlestick Chart for {symbol} on {start_date}")
+    renderLightweightCharts([{
+        "chart": chartOptions,
+        "series": seriesCandlestickChart
+    }], 'candlestick')
 
-# # Display candlestick chart
-# display_candlestick_chart()
+# Refresh during market hours
+refresh_during_market_hours(refresh_interval=10)
 
-# # Sleep to simulate waiting for the next refresh
-# time.sleep(1)
+# Display candlestick chart
+display_candlestick_chart()
+
+# Sleep to simulate waiting for the next refresh
+time.sleep(1)
 
 
 # import streamlit as st
