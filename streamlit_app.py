@@ -86,7 +86,7 @@ renderLightweightCharts([
 now = datetime.now()
 
 # Set an interval for refreshing the page (in seconds)
-refresh_interval = 300  # 5 minutes
+refresh_interval = 10  # 5 minutes
 
 # Store the last time the page was refreshed in Streamlit's session state
 if "last_refresh" not in st.session_state:
