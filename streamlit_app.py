@@ -127,12 +127,13 @@ def display_candlestick_chart():
         "series": seriesCandlestickChart
     }], 'candlestick')
 
-# Refresh during market hours
-refresh_during_market_hours(refresh_interval=300)  # Set to refresh every 5 minutes
+
 
 # Display candlestick chart
 display_candlestick_chart()
 
+# Refresh during market hours
+refresh_during_market_hours(refresh_interval=300)  # Set to refresh every 5 minutes
 # Sleep to simulate waiting for the next refresh
 time.sleep(1)
 
