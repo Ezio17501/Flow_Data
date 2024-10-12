@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 from streamlit_lightweight_charts import renderLightweightCharts
 import time
+from datetime import datetime, timedelta
 
 # Streamlit app setup
 st.set_page_config(
@@ -81,12 +82,26 @@ renderLightweightCharts([
         "series": seriesCandlestickChart
     }
 ], 'candlestick')
-st.write("This app will auto-refresh every 10 seconds.")
+# Get current time
+now = datetime.now()
 
-for i in range(10):
-    st.write(f"Refreshing in {10 - i} seconds...")
-    time.sleep(1)
-    st.experimental_rerun()  
+# Set an interval for refreshing the page (in seconds)
+refresh_interval = 300  # 5 minutes
+
+# Store the last time the page was refreshed in Streamlit's session state
+if "last_refresh" not in st.session_state:
+    st.session_state.last_refresh = now
+
+# Check if the refresh interval has passed
+if now - st.session_state.last_refresh > timedelta(seconds=refresh_interval):
+    # Update the last refresh time
+    st.session_state.last_refresh = now
+    # Rerun the app to refresh the data
+    st.experimental_rerun()
+
+# Sleep for a while to simulate live data
+time.sleep(1)
+st.write("Waiting for the next refresh...")
     
 # import streamlit as st
 # import yfinance as yf
