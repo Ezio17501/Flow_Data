@@ -10,6 +10,8 @@ st.set_page_config(
     page_title='Real-Time Data Science Dashboard',
     layout='wide'
 )
+
+# Function to refresh during market hours with timezone handling
 def refresh_during_market_hours(refresh_interval=300):  # Refresh every 5 minutes (300 seconds)
     """Refresh the app during market hours (9:15 AM to 3:30 PM IST) using time.sleep() to simulate refresh intervals."""
     
@@ -54,7 +56,6 @@ def refresh_during_market_hours(refresh_interval=300):  # Refresh every 5 minute
         
     else:
         st.write("Market is closed. No updates will be made.")
-
 
 # Fetch and display candlestick chart data
 def display_candlestick_chart():
@@ -127,13 +128,14 @@ def display_candlestick_chart():
     }], 'candlestick')
 
 # Refresh during market hours
-refresh_during_market_hours(refresh_interval=10)
+refresh_during_market_hours(refresh_interval=300)  # Set to refresh every 5 minutes
 
 # Display candlestick chart
 display_candlestick_chart()
 
 # Sleep to simulate waiting for the next refresh
 time.sleep(1)
+
 
 
 # import streamlit as st
