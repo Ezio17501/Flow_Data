@@ -3,6 +3,7 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime
 from streamlit_lightweight_charts import renderLightweightCharts
+import time
 
 # Streamlit app setup
 st.set_page_config(
@@ -80,7 +81,13 @@ renderLightweightCharts([
         "series": seriesCandlestickChart
     }
 ], 'candlestick')
-time.sleep(5)
+st.write("This app will auto-refresh every 10 seconds.")
+
+for i in range(10):
+    st.write(f"Refreshing in {10 - i} seconds...")
+    time.sleep(1)
+    st.experimental_rerun()  
+    
 # import streamlit as st
 # import yfinance as yf
 # import pandas as pd
