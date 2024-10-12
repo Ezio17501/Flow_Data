@@ -38,7 +38,7 @@ def refresh_during_market_hours(refresh_interval=10):
             # Update the last refresh time
             st.session_state.last_refresh = now
             # Rerun the app to refresh the data
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.write("Market is closed. No updates will be made.")
 
