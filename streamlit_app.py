@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from streamlit_lightweight_charts import renderLightweightCharts
 import time
+import pytz
 
 # Streamlit app setup
 st.set_page_config(
@@ -11,20 +12,23 @@ st.set_page_config(
     layout='wide'
 )
 
-# Function to refresh during market hours
+# Function to refresh during market hours with timezone
 def refresh_during_market_hours(refresh_interval=10):
-    """Refresh the app every `refresh_interval` seconds during market hours (9:15 AM to 3:30 PM)."""
+    """Refresh the app every `refresh_interval` seconds during market hours (9:15 AM to 3:30 PM IST)."""
     
-    # Define market open and close times
-    market_open = datetime.now().replace(hour=9, minute=15, second=0, microsecond=0)
-    market_close = datetime.now().replace(hour=15, minute=30, second=0, microsecond=0)
+    # Define the Indian Standard Time (IST) timezone
+    ist = pytz.timezone('Asia/Kolkata')
 
-    # Get the current time
-    now = datetime.now()
+    # Define market open and close times in IST
+    market_open = datetime.now(ist).replace(hour=9, minute=15, second=0, microsecond=0)
+    market_close = datetime.now(ist).replace(hour=15, minute=30, second=0, microsecond=0)
+
+    # Get the current time in IST
+    now = datetime.now(ist)
 
     # Check if the current time is within market hours
     if market_open <= now <= market_close:
-        st.write(f"Market is open! Refreshing data every {refresh_interval} seconds.")
+        st.write(f"Market is open! Refreshing data every {refresh_interval} seconds (IST).")
         
         # Store the last time the page was refreshed in Streamlit's session state
         if "last_refresh" not in st.session_state:
