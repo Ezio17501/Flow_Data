@@ -82,11 +82,12 @@
 #     }
 # ], 'candlestick')
 
+
 import streamlit as st
 import yfinance as yf
 import pandas as pd
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from streamlit_lightweight_charts import renderLightweightCharts
 
 # Streamlit app setup
@@ -96,25 +97,22 @@ st.set_page_config(
     layout='wide'
 )
 
-# Initial setup for live feed
+# Simulating live feed for stock data on a specific date
 symbol = 'FSL.NS'
+start_date = '2024-10-11'
+end_date = '2024-10-12'
 interval = '5m'
 
-# Setting start date to current day and time for live feed
-start_date = datetime.now().strftime('%Y-%m-%d')
-end_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+# Fetch historical data for 11th Oct 2024
+data = yf.download(symbol, start=start_date, end=end_date, interval=interval)
 
-# Container for real-time chart
-placeholder = st.empty()
+# Prepare initial candlestick data for the first 5-minute interval
+candlestick_data = []
 
-# Function to fetch and prepare data
-def fetch_candlestick_data():
-    # Fetch stock data for the current day
-    data = yf.download(symbol, start=start_date, end=end_date, interval=interval)
-    candlestick_data = []
-    
-    for index, row in data.iterrows():
-        # Converting timestamp to Unix format
+def prepare_data(data, start_idx, end_idx):
+    # Prepare the candlestick data for the range from start_idx to end_idx
+    for index, row in data.iloc[start_idx:end_idx].iterrows():
+        # Convert timestamp to Unix format
         timestamp = int(index.timestamp())
         candlestick_data.append({
             "open": row['Open'],
@@ -123,9 +121,8 @@ def fetch_candlestick_data():
             "close": row['Close'],
             "time": timestamp
         })
-    return candlestick_data
 
-# Initial chart options
+# Define chart options
 chartOptions = {
     "width": 800,  # Enlarged chart width
     "height": 600,  # Enlarged chart height
@@ -148,8 +145,8 @@ chartOptions = {
     },
 }
 
-# Function to render the chart
-def render_candlestick_chart(candlestick_data):
+# Rendering function for the candlestick chart
+def render_candlestick_chart():
     seriesCandlestickChart = [{
         "type": 'Candlestick',
         "data": candlestick_data,
@@ -162,6 +159,7 @@ def render_candlestick_chart(candlestick_data):
         }
     }]
     
+    # Use placeholder to update the chart with new data
     with placeholder.container():
         st.subheader(f"Candlestick Chart for {symbol} on {start_date}")
         renderLightweightCharts([
@@ -171,21 +169,22 @@ def render_candlestick_chart(candlestick_data):
             }
         ], 'candlestick')
 
-# Live feed simulation
-candlestick_data = fetch_candlestick_data()
-render_candlestick_chart(candlestick_data)
+# Container for the live chart
+placeholder = st.empty()
 
-# Real-time update loop (fetch new data every 5 minutes)
-while True:
-    # Fetch the latest 5-minute interval data
-    new_data = fetch_candlestick_data()
+# Simulation of live feed
+interval_seconds = 300  # 5 minutes in seconds
+total_intervals = len(data)
+
+# Simulate starting from the first 5-minute interval
+for i in range(total_intervals):
+    # Prepare data up to the current interval (i.e., from 0 to i+1)
+    prepare_data(data, i, i + 1)
     
-    # Only append new data if it's different
-    if new_data[-1]['time'] != candlestick_data[-1]['time']:
-        candlestick_data.append(new_data[-1])
+    # Render the chart with the updated data
+    render_candlestick_chart()
     
-    # Re-render the chart with updated data
-    render_candlestick_chart(candlestick_data)
-    
-    # Wait for 5 minutes before fetching new data
-    time.sleep(300)  # 300 seconds = 5 minutes
+    # Wait for 5 minutes before showing the next interval's data (simulating live feed)
+    if i < total_intervals - 1:  # Skip wait for the last interval
+        time.sleep(interval_seconds)
+
