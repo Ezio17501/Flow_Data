@@ -1,16 +1,43 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from streamlit_lightweight_charts import renderLightweightCharts
 import time
-from datetime import datetime, timedelta
 
 # Streamlit app setup
 st.set_page_config(
     page_title='Real-Time Data Science Dashboard',
     layout='wide'
 )
+
+# Function to refresh during market hours
+def refresh_during_market_hours(refresh_interval=10):
+    """Refresh the app every `refresh_interval` seconds during market hours (9:15 AM to 3:30 PM)."""
+    
+    # Define market open and close times
+    market_open = datetime.now().replace(hour=9, minute=15, second=0, microsecond=0)
+    market_close = datetime.now().replace(hour=15, minute=30, second=0, microsecond=0)
+
+    # Get the current time
+    now = datetime.now()
+
+    # Check if the current time is within market hours
+    if market_open <= now <= market_close:
+        st.write(f"Market is open! Refreshing data every {refresh_interval} seconds.")
+        
+        # Store the last time the page was refreshed in Streamlit's session state
+        if "last_refresh" not in st.session_state:
+            st.session_state.last_refresh = now
+
+        # Check if the refresh interval has passed
+        if now - st.session_state.last_refresh > timedelta(seconds=refresh_interval):
+            # Update the last refresh time
+            st.session_state.last_refresh = now
+            # Rerun the app to refresh the data
+            st.experimental_rerun()
+    else:
+        st.write("Market is closed. No updates will be made.")
 
 # Fetch FSL.NS data for 11th Oct with 5-minute interval
 symbol = 'FSL.NS'
@@ -82,6 +109,11 @@ renderLightweightCharts([
         "series": seriesCandlestickChart
     }
 ], 'candlestick')
+
+# Refresh during market hours
+refresh_during_market_hours(refresh_interval=10)
+
+time.sleep(1)
 
 # import streamlit as st
 # import yfinance as yf
