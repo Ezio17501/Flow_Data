@@ -82,7 +82,6 @@
 #     }
 # ], 'candlestick')
 
-
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -146,7 +145,7 @@ chartOptions = {
 }
 
 # Rendering function for the candlestick chart
-def render_candlestick_chart():
+def render_candlestick_chart(i):
     seriesCandlestickChart = [{
         "type": 'Candlestick',
         "data": candlestick_data,
@@ -159,7 +158,7 @@ def render_candlestick_chart():
         }
     }]
     
-    # Use placeholder to update the chart with new data
+    # Use placeholder to update the chart with new data, using a unique key for each iteration
     with placeholder.container():
         st.subheader(f"Candlestick Chart for {symbol} on {start_date}")
         renderLightweightCharts([
@@ -167,7 +166,7 @@ def render_candlestick_chart():
                 "chart": chartOptions,
                 "series": seriesCandlestickChart
             }
-        ], 'candlestick')
+        ], key=f'candlestick_{i}')  # Assigning a unique key for each iteration
 
 # Container for the live chart
 placeholder = st.empty()
@@ -182,7 +181,7 @@ for i in range(total_intervals):
     prepare_data(data, i, i + 1)
     
     # Render the chart with the updated data
-    render_candlestick_chart()
+    render_candlestick_chart(i)
     
     # Wait for 5 minutes before showing the next interval's data (simulating live feed)
     if i < total_intervals - 1:  # Skip wait for the last interval
