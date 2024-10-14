@@ -61,8 +61,8 @@ def refresh_during_market_hours(refresh_interval=300):  # Refresh every 5 minute
 def display_candlestick_chart():
     # Stock symbol and data settings
     symbol = 'FSL.NS'
-    start_date = '2024-10-11'
-    end_date = '2024-10-12'
+    start_date = '2024-10-14'
+    end_date = '2024-10-15'
     interval = '5m'
 
     # Fetch stock data from Yahoo Finance
@@ -133,7 +133,7 @@ def display_candlestick_chart():
 display_candlestick_chart()
 
 # Refresh during market hours
-refresh_during_market_hours(refresh_interval=5)  # Set to refresh every 5 minutes
+refresh_during_market_hours(refresh_interval=1)  # Set to refresh every 5 minutes
 
 # Sleep to simulate waiting for the next refresh
 time.sleep(1)
